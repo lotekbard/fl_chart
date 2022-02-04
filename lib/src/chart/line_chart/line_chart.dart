@@ -8,27 +8,29 @@ class LineChart extends ImplicitlyAnimatedWidget {
   /// Determines how the [LineChart] should be look like.
   final LineChartData data;
 
+  final bool shouldClearTouches;
+
   /// [data] determines how the [LineChart] should be look like,
   /// when you make any change in the [LineChartData], it updates
   /// new values with animation, and duration is [swapAnimationDuration].
   /// also you can change the [swapAnimationCurve]
   /// which default is [Curves.linear].
-  const LineChart(
-    this.data, {
+  const LineChart(this.data, {
     Key? key,
     Duration swapAnimationDuration = const Duration(milliseconds: 150),
     Curve swapAnimationCurve = Curves.linear,
+    this.shouldClearTouches = false,
   }) : super(
-            key: key,
-            duration: swapAnimationDuration,
-            curve: swapAnimationCurve);
+      key: key,
+      duration: swapAnimationDuration,
+      curve: swapAnimationCurve);
 
-  /// Creates a [_LineChartState]
+  /// Creates a [LineChartState]
   @override
-  _LineChartState createState() => _LineChartState();
+  LineChartState createState() => LineChartState();
 }
 
-class _LineChartState extends AnimatedWidgetBaseState<LineChart> {
+class LineChartState extends AnimatedWidgetBaseState<LineChart> {
   /// we handle under the hood animations (implicit animations) via this tween,
   /// it lerps between the old [LineChartData] to the new one.
   LineChartDataTween? _lineChartDataTween;
@@ -44,6 +46,11 @@ class _LineChartState extends AnimatedWidgetBaseState<LineChart> {
   @override
   Widget build(BuildContext context) {
     final showingData = _getData();
+
+    if (widget.shouldClearTouches) {
+      _showingTouchedTooltips.clear();
+      _showingTouchedIndicators.clear();
+    }
 
     return LineChartLeaf(
       data: _withTouchedIndicators(_lineChartDataTween!.evaluate(animation)),
@@ -80,8 +87,7 @@ class _LineChartState extends AnimatedWidgetBaseState<LineChart> {
     return widget.data;
   }
 
-  void _handleBuiltInTouch(
-      FlTouchEvent event, LineTouchResponse? touchResponse) {
+  void _handleBuiltInTouch(FlTouchEvent event, LineTouchResponse? touchResponse) {
     _providedTouchCallback?.call(event, touchResponse);
 
     if (!event.isInterestedForInteractions ||
@@ -110,12 +116,19 @@ class _LineChartState extends AnimatedWidgetBaseState<LineChart> {
     });
   }
 
+  void clearTouches() {
+    setState(() {
+      _showingTouchedTooltips.clear();
+      _showingTouchedIndicators.clear();
+    });
+  }
+
   @override
   void forEachTween(TweenVisitor<dynamic> visitor) {
     _lineChartDataTween = visitor(
       _lineChartDataTween,
       _getData(),
-      (dynamic value) => LineChartDataTween(begin: value, end: widget.data),
+          (dynamic value) => LineChartDataTween(begin: value, end: widget.data),
     ) as LineChartDataTween;
   }
 }
