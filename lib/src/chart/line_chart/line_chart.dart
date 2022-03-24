@@ -43,6 +43,8 @@ class LineChartState extends AnimatedWidgetBaseState<LineChart> {
 
   final Map<int, List<int>> _showingTouchedIndicators = {};
 
+  final List<LineBarSpot> _touchedSpots = [];
+
   @override
   Widget build(BuildContext context) {
     final showingData = _getData();
@@ -50,12 +52,34 @@ class LineChartState extends AnimatedWidgetBaseState<LineChart> {
     if (widget.shouldClearTouches) {
       _showingTouchedTooltips.clear();
       _showingTouchedIndicators.clear();
+    } else {
+      _reSelectTouches(showingData);
     }
 
     return LineChartLeaf(
       data: _withTouchedIndicators(_lineChartDataTween!.evaluate(animation)),
       targetData: _withTouchedIndicators(showingData),
     );
+  }
+
+  void _reSelectTouches(LineChartData data) {
+    if (_touchedSpots.isNotEmpty) {
+      _showingTouchedIndicators.clear();
+
+      for (int i = 0; i < _touchedSpots.length; ++i) {
+        final int index = data.lineBarsData[i].spots.indexWhere((element) =>
+        element.x == _touchedSpots[i].x && element.y == _touchedSpots[i].y);
+        if (index > -1) {
+          _showingTouchedIndicators[i] = [index];
+        } else {
+          _showingTouchedTooltips.clear();
+        }
+      }
+    }
+    if (_showingTouchedTooltips.isEmpty) {
+      _showingTouchedIndicators.clear();
+    }
+    setState(() {});
   }
 
   LineChartData _withTouchedIndicators(LineChartData lineChartData) {
@@ -113,6 +137,9 @@ class LineChartState extends AnimatedWidgetBaseState<LineChart> {
 
       _showingTouchedTooltips.clear();
       _showingTouchedTooltips.add(ShowingTooltipIndicators(sortedLineSpots));
+
+      _touchedSpots.clear();
+      _touchedSpots.addAll(sortedLineSpots);
     });
   }
 
