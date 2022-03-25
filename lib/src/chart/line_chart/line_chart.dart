@@ -79,7 +79,6 @@ class LineChartState extends AnimatedWidgetBaseState<LineChart> {
     if (_showingTouchedTooltips.isEmpty) {
       _showingTouchedIndicators.clear();
     }
-    setState(() {});
   }
 
   LineChartData _withTouchedIndicators(LineChartData lineChartData) {
