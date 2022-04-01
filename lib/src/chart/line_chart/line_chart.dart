@@ -66,13 +66,15 @@ class LineChartState extends AnimatedWidgetBaseState<LineChart> {
     if (_touchedSpots.isNotEmpty) {
       _showingTouchedIndicators.clear();
 
-      for (int i = 0; i < _touchedSpots.length; ++i) {
-        final int index = data.lineBarsData[i].spots.indexWhere((element) =>
-        element.x == _touchedSpots[i].x && element.y == _touchedSpots[i].y);
-        if (index > -1) {
-          _showingTouchedIndicators[i] = [index];
-        } else {
-          _showingTouchedTooltips.clear();
+      if (data.lineBarsData.length == _touchedSpots.length) {
+        for (int i = 0; i < _touchedSpots.length; ++i) {
+          final int index = data.lineBarsData[i].spots.indexWhere((element) =>
+          element.x == _touchedSpots[i].x && element.y == _touchedSpots[i].y);
+          if (index > -1) {
+            _showingTouchedIndicators[i] = [index];
+          } else {
+            _showingTouchedTooltips.clear();
+          }
         }
       }
     }
