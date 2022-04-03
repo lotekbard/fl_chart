@@ -52,6 +52,7 @@ class LineChartState extends AnimatedWidgetBaseState<LineChart> {
     if (widget.shouldClearTouches) {
       _showingTouchedTooltips.clear();
       _showingTouchedIndicators.clear();
+      _touchedSpots.clear();
     } else {
       _reSelectTouches(showingData);
     }
@@ -67,7 +68,7 @@ class LineChartState extends AnimatedWidgetBaseState<LineChart> {
       _showingTouchedIndicators.clear();
 
       if (data.lineBarsData.length == _touchedSpots.length) {
-        for (int i = 0; i < _touchedSpots.length; ++i) {
+        for (int i = 0; i < data.lineBarsData.length; ++i) {
           final int index = data.lineBarsData[i].spots.indexWhere((element) =>
           element.x == _touchedSpots[i].x && element.y == _touchedSpots[i].y);
           if (index > -1) {
@@ -75,6 +76,22 @@ class LineChartState extends AnimatedWidgetBaseState<LineChart> {
           } else {
             _showingTouchedTooltips.clear();
           }
+        }
+      }
+    } else {
+      for (int i = 0; i < _touchedSpots.length; ++i) {
+        final List<int> indexes = [];
+
+        for (int j = 0; j < data.lineBarsData.length; ++j) {
+          final int index = data.lineBarsData[j].spots.indexWhere((element) =>
+          element.x == _touchedSpots[i].x && element.y == _touchedSpots[i].y);
+          indexes.add(index);
+        }
+
+        if (indexes.any((element) => element != -1)) {
+          _showingTouchedIndicators[i] = [indexes.firstWhere((element) => element != -1)];
+        } else {
+          _showingTouchedTooltips.clear();
         }
       }
     }
