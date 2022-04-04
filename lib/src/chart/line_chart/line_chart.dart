@@ -78,7 +78,21 @@ class LineChartState extends AnimatedWidgetBaseState<LineChart> {
           }
         }
       } else {
-        _showingTouchedTooltips.clear();
+        for (int i = 0; i < _touchedSpots.length; ++i) {
+          final List<int> indexes = [];
+
+          for (int j = 0; j < data.lineBarsData.length; ++j) {
+            final int index = data.lineBarsData[j].spots.indexWhere((element) =>
+            element.x == _touchedSpots[i].x && element.y == _touchedSpots[i].y);
+            indexes.add(index);
+          }
+
+          if (indexes.any((element) => element != -1)) {
+            _showingTouchedIndicators[i] = [indexes.firstWhere((element) => element != -1)];
+          } else {
+            _showingTouchedTooltips.clear();
+          }
+        }
       }
     }
     if (_showingTouchedTooltips.isEmpty) {
