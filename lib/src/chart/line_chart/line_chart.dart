@@ -106,6 +106,10 @@ class LineChartState extends AnimatedWidgetBaseState<LineChart> {
         }
       }
     }
+    if (_showingTouchedIndicators.isNotEmpty && _showingTouchedTooltips.isEmpty) {
+      _showingTouchedTooltips.add(ShowingTooltipIndicators(_touchedSpots));
+    }
+
     if (_showingTouchedTooltips.isEmpty) {
       _showingTouchedIndicators.clear();
     }
@@ -149,6 +153,7 @@ class LineChartState extends AnimatedWidgetBaseState<LineChart> {
       setState(() {
         _showingTouchedTooltips.clear();
         _showingTouchedIndicators.clear();
+        _touchedSpots.clear();
       });
       return;
     }
