@@ -1254,12 +1254,6 @@ class LineChartPainter extends AxisChartPainter<LineChartData> {
     /// creating TextPainters to calculate the width and height of the tooltip
     final drawingTextPainters = <TextPainter>[];
 
-    final tooltipItems =
-        tooltipData.getTooltipItems(showingTooltipSpots.showingSpots);
-    if (tooltipItems.length != showingTooltipSpots.showingSpots.length + 1) {
-      throw Exception('tooltipItems and touchedSpots size should be same');
-    }
-
     for (var i = 0; i < tooltipItems.length; i++) {
       final tooltipItem = tooltipItems[i];
       if (tooltipItem == null) {
