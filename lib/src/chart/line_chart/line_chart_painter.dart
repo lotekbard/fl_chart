@@ -1256,11 +1256,11 @@ class LineChartPainter extends AxisChartPainter<LineChartData> {
 
     final tooltipItems =
         tooltipData.getTooltipItems(showingTooltipSpots.showingSpots);
-    if (tooltipItems.length != showingTooltipSpots.showingSpots.length) {
+    if (tooltipItems.length != showingTooltipSpots.showingSpots.length + 1) {
       throw Exception('tooltipItems and touchedSpots size should be same');
     }
 
-    for (var i = 0; i < showingTooltipSpots.showingSpots.length; i++) {
+    for (var i = 0; i < tooltipItems.length; i++) {
       final tooltipItem = tooltipItems[i];
       if (tooltipItem == null) {
         continue;
